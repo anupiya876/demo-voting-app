@@ -6,15 +6,17 @@ trigger:
     - vote/*
 
 variables:
-  dockerRegistryServiceConnection: 
+  dockerRegistryServiceConnection: #select your service connection
   imageRepository: 'votingapp'
-  containerRegistry:
+  containerRegistry: #acr address
+  dockerFilePath: '$(Build.SourcesRegistry)/vote'
   tag: '$(Build.BuildId)'
 
 pool:
   vmImage: ubuntu-latest
 
 stages:
+
 - stage: Build
   displayName: Build
   jobs:
@@ -24,10 +26,10 @@ stages:
     
     - task: Docker@2
       displayName: 'Building Image'
-      inputs:
+      inputs:   #create a service connection with acr for pushing into registry and put in into container registry for authentication to acr
         repository: 'VotingAppRepo'
         command: 'build'
-        Dockerfile: '$(Build.SourcesRegistry)/vote'
+        Dockerfile: '$(dockerFilePath)'
 
 - stage: Push
   jobs: 
@@ -37,10 +39,11 @@ stages:
 
     - task: Docker@2
       displayName: 'Pushing Image'
-      inputs:
+      inputs:    #create a service connection with acr for pushing into registry and put in into container registry for authentication to acr
         repository: 'VotingAppRepo'
         command: 'push'
     
 
+                               # CI Part Completed
 
 
